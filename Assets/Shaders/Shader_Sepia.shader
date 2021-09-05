@@ -2,7 +2,6 @@
 {
     Properties
     {
-        _Color("Color", Color) = (1,1,1,1)
     }
     SubShader
     {
@@ -60,15 +59,10 @@
             //size information
             float4 _GrabTexture_TexelSize;
 
-            fixed4 _Color;
-
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 pixelRGB = tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(float4(i.grabPosUV.x, i.grabPosUV.y, i.grabPosUV.z, i.grabPosUV.w)));
                 fixed4 pixelSepia = fixed4(0, 0, 0, 0);
-
-                //include mat color
-                pixelRGB *= _Color;
 
                 //convert rgb to sepia
                 int sepiaRed = (0.393 * pixelRGB.r) + (0.769 * pixelRGB.g) + (0.189 * pixelRGB.b);
