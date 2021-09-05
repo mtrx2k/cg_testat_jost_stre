@@ -10,10 +10,9 @@
         // No culling or depth
         Cull Off ZWrite Off ZTest Always
 
-        // "Queue"="Transparent": Draw ourselves after all opaque geometry
-        // "IgnoreProjector"="True": Don't be affected by any Projectors
         // "RenderType"="Transparent": Declare RenderType as transparent
-        Tags { "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+        Tags {"RenderType" = "Transparent"}
+        LOD 200
 
         // Grab the screen behind the object into Default _GrabTexture
         // https://docs.unity3d.com/Manual/SL-GrabPass.html

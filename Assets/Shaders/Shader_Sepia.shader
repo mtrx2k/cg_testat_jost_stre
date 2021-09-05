@@ -56,41 +56,19 @@
             //define texture for fragement shader
             sampler2D _GrabTexture;
 
-            //size information
-            float4 _GrabTexture_TexelSize;
-
             fixed4 frag (v2f i) : SV_Target
             {
-                fixed4 pixelRGB = tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(float4(i.grabPosUV.x, i.grabPosUV.y, i.grabPosUV.z, i.grabPosUV.w)));
-                fixed4 pixelSepia = fixed4(0, 0, 0, 0);
+                float4 pixelRGB = tex2Dproj(_GrabTexture, UNITY_PROJ_COORD(float4(i.grabPosUV.x, i.grabPosUV.y, i.grabPosUV.z, i.grabPosUV.w)));
+                fixed4 pixelSepia = fixed4(0, 0, 0, pixelRGB.w);
 
                 //convert rgb to sepia
-                int sepiaRed = (0.393 * pixelRGB.r) + (0.769 * pixelRGB.g) + (0.189 * pixelRGB.b);
-                int sepiaGreen = (0.349 * pixelRGB.r) + (0.686 * pixelRGB.g) + (0.168 * pixelRGB.b);
-                int sepiaBlue = (0.272 * pixelRGB.r) + (0.534 * pixelRGB.g) + (0.131 * pixelRGB.b);
-
-                if (sepiaRed < 255) {
-                    pixelSepia.r = sepiaRed;
-                }
-                else {
-                    pixelSepia.r = 255;
-                };
-
-                if (sepiaGreen < 255) {
-                    pixelSepia.g = sepiaGreen;
-                }
-                else {
-                    pixelSepia.g = 255;
-                };
-
-                if (sepiaBlue < 255) {
-                    pixelSepia.b = sepiaBlue;
-                }
-                else {
-                    pixelSepia.b = 255;
-                };
+                pixelSepia.r = (0.393 * pixelRGB.r) + (0.769 * pixelRGB.g) + (0.189 * pixelRGB.b);
+                pixelSepia.g = (0.349 * pixelRGB.r) + (0.686 * pixelRGB.g) + (0.168 * pixelRGB.b);
+                pixelSepia.b = (0.272 * pixelRGB.r) + (0.534 * pixelRGB.g) + (0.131 * pixelRGB.b);
+                pixelSepia.a = pixelRGB.a;
 
                 return pixelSepia;
+      
             }
             ENDCG
         }
