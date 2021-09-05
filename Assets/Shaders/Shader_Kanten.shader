@@ -93,13 +93,13 @@
             }
 
             //fragment shader: kantenfilter
-            fixed4 frag(v2f i) : SV_Target
-            {
-                fixed s = sobelOperation(_GrabTexture, i.grabPosUV);
-            return fixed4(s, s, s, 1);
+            float4 frag(v2f_img IN) : COLOR{
+            float s = sobelOperation(_GrabTexture, IN.uv);
+            return float4(s, s, s, 1);
             }
 
             ENDCG
+
         }
     }
 }
