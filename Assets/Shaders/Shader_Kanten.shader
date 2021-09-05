@@ -58,13 +58,48 @@
             sampler2D _GrabTexture;
 
             //size information of textures pixels
-            float4 _GrabTexture_TexelSize
+            float4 _GrabTexture_TexelSize;
 
-            //fragment shader
-            fixed4 frag (v2f i) : SV_Target
-            {
-                
+            //sobel operation gt: grabTexture; gPUV: grabPositionUV
+            fixed sobelOperation(sampler2D gt, float2 gPUV) {
+                float2 pixelDelta = float2(_GrabTexture_TexelSize.x, _GrabTexture_TexelSize.y);
+
+                float4 x = float4(0, 0, 0, 0);
+                float4 y = float4(0, 0, 0, 0);
+
+                //grad x
+                x += tex2D(gt, (gPUV + float2(-1.0, -1.0) * pixelDelta)) * 1.0;
+                x += tex2D(gt, (gPUV + float2(0.0, -1.0) * pixelDelta)) * 0.0;
+                x += tex2D(gt, (gPUV + float2(1.0, -1.0) * pixelDelta)) * -1.0;
+                x += tex2D(gt, (gPUV + float2(-1.0, 0.0) * pixelDelta)) * 2.0;
+                x += tex2D(gt, (gPUV + float2(0.0, 0.0) * pixelDelta)) * 0.0;
+                x += tex2D(gt, (gPUV + float2(1.0, 0.0) * pixelDelta)) * -2.0;
+                x += tex2D(gt, (gPUV + float2(-1.0, 1.0) * pixelDelta)) * 1.0;
+                x += tex2D(gt, (gPUV + float2(0.0, 1.0) * pixelDelta)) * 0.0;
+                x += tex2D(gt, (gPUV + float2(1.0, 1.0) * pixelDelta)) * -1.0;
+
+                //grad y
+                y += tex2D(gt, (gPUV + float2(-1.0, -1.0) * pixelDelta)) * 1.0;
+                y += tex2D(gt, (gPUV + float2(0.0, -1.0) * pixelDelta)) * 2.0;
+                y += tex2D(gt, (gPUV + float2(1.0, -1.0) * pixelDelta)) * 1.0;
+                y += tex2D(gt, (gPUV + float2(-1.0, 0.0) * pixelDelta)) * 0.0;
+                y += tex2D(gt, (gPUV + float2(0.0, 0.0) * pixelDelta)) * 0.0;
+                y += tex2D(gt, (gPUV + float2(1.0, 0.0) * pixelDelta)) * 0.0;
+                y += tex2D(gt, (gPUV + float2(-1.0, 1.0) * pixelDelta)) * -1.0;
+                y += tex2D(gt, (gPUV + float2(0.0, 1.0) * pixelDelta)) * -2.0;
+                y += tex2D(gt, (gPUV + float2(1.0, 1.0) * pixelDelta)) * -1.0;
+
+                //relativer betrag
+                return sqrt(x * x + y * y);
             }
+
+            //fragment shader: kantenfilter
+            fixed4 frag(v2f i) : SV_Target
+            {
+                fixed s = sobelOperation(_GrabTexture, i.grabPosUV);
+            return fixed4(s, s, s, 1);
+            }
+
             ENDCG
         }
     }
